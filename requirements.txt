@@ -1,0 +1,6 @@
+# main
+fastapi
+uvicorn
+
+# lint
+flake8
