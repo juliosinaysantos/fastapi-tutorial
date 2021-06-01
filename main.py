@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -12,7 +12,16 @@ async def root():
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Optional[str] = None):
+async def read_item(
+    item_id: int,
+    q: Optional[str] = Query(
+        None,
+        # validations (strings)
+        min_length=3,
+        max_length=10,
+        regex="^foo$",
+    ),
+):
     return {"item_id": item_id, "q": q}
 
 
@@ -41,5 +50,19 @@ async def create_item(item: Item):
 
 
 @app.put("/items/{item_id}")
-async def update_item(item_id: int, item: Item, q: Optional[str] = None):
+async def update_item(
+    item_id: int,
+    item: Item,
+    q: Optional[List[str]] = Query(
+        ["spam", "eggs"],  # or None
+        # generic validations and metadata
+        alias="item-query",
+        title="Query string",
+        description=(
+            "Query string for the items to search in the database"
+            "that have a good match"
+        ),
+        deprecated=True,
+    ),
+):
     return {"item_id": item_id, **item.dict(), "q": q}
