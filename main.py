@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Path, Query
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -13,7 +13,18 @@ async def root():
 
 @app.get("/items/{item_id}")
 async def read_item(
-    item_id: int,
+    # it's allowed args before *.
+    *,
+    # the following parameters will be kwargs,
+    # even if they don't have a default value.
+    item_id: int = Path(
+        ...,
+        # validations (numbers)
+        ge=1,
+        lt=1000,
+        # metadata
+        title="The ID of the item to get",
+    ),
     q: Optional[str] = Query(
         None,
         # validations (strings)
