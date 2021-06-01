@@ -1,7 +1,7 @@
-from typing import Optional, List
+from typing import Optional, List, Set
 
 from fastapi import FastAPI, Body, Path, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 app = FastAPI()
 
@@ -48,6 +48,11 @@ async def read_items(skip: int = 0, limit: int = 10):
     return fake_items_db[skip: skip + limit]
 
 
+class Image(BaseModel):
+    url: HttpUrl
+    name: str
+
+
 class Item(BaseModel):
     name: str
     description: Optional[str] = Field(
@@ -61,6 +66,8 @@ class Item(BaseModel):
         description="The price must be greater than zero",
     )
     tax: Optional[float] = None
+    tags: Set[str] = set()
+    image: Optional[List[Image]] = None
 
 
 class User(BaseModel):
@@ -95,3 +102,8 @@ async def update_item(
     ),
 ):
     return {"item_id": item_id, **item.dict(), "q": q}
+
+
+@app.post("/images/")
+async def create_images(images: List[Image] = Body(..., embed=True)):
+    return images
