@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from fastapi import FastAPI, Body, Path, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -50,8 +50,16 @@ async def read_items(skip: int = 0, limit: int = 10):
 
 class Item(BaseModel):
     name: str
-    description: Optional[str] = None
-    price: float
+    description: Optional[str] = Field(
+        None,
+        title="The description of the item",
+        max_length=300,
+    )
+    price: float = Field(
+        ...,
+        gt=0,
+        description="The price must be greater than zero",
+    )
     tax: Optional[float] = None
 
 
