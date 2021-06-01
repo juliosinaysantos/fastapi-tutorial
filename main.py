@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, Body, Path, Query
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -55,9 +55,19 @@ class Item(BaseModel):
     tax: Optional[float] = None
 
 
+class User(BaseModel):
+    username: str
+    full_name: Optional[str] = None
+
+
 @app.post("/items/")
-async def create_item(item: Item):
-    return item
+async def create_item(
+    item: Item,  # for embed use -> item: Item = Body(..., embed=True)
+    user: User,
+    importance: int = Body(...),
+    q: Optional[str] = None,
+):
+    return {"item": item, "user": user, "importance": importance}
 
 
 @app.put("/items/{item_id}")
