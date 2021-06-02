@@ -1,6 +1,6 @@
 from typing import Optional, List, Set
 
-from fastapi import FastAPI, Body, Path, Query, Cookie, Header
+from fastapi import FastAPI, Body, Path, Query, Cookie, Header, status
 from pydantic import BaseModel, Field, HttpUrl
 
 app = FastAPI()
@@ -85,7 +85,7 @@ class User(BaseModel):
     full_name: Optional[str] = None
 
 
-@app.post("/items/")
+@app.post("/items/", status_code=status.HTTP_201_CREATED)
 async def create_item(
     item: Item,  # for embed use -> item: Item = Body(..., embed=True)
     user: User,
