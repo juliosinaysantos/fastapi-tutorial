@@ -1,6 +1,6 @@
 from typing import Optional, List, Set
 
-from fastapi import FastAPI, Body, Path, Query, Cookie
+from fastapi import FastAPI, Body, Path, Query, Cookie, Header
 from pydantic import BaseModel, Field, HttpUrl
 
 app = FastAPI()
@@ -122,3 +122,8 @@ async def create_images(images: List[Image] = Body(..., embed=True)):
 @app.get("/user")
 async def get_user(token: Optional[str] = Cookie(None)):
     return token
+
+
+@app.get("/user-agent")
+async def get_user_agent(user_agent: Optional[str] = Header(None)):
+    return {"User-Agent": user_agent}
