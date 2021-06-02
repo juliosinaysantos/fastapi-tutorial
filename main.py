@@ -1,6 +1,6 @@
 from typing import Optional, List, Set
 
-from fastapi import FastAPI, Body, Path, Query
+from fastapi import FastAPI, Body, Path, Query, Cookie
 from pydantic import BaseModel, Field, HttpUrl
 
 app = FastAPI()
@@ -117,3 +117,8 @@ async def update_item(
 @app.post("/images/")
 async def create_images(images: List[Image] = Body(..., embed=True)):
     return images
+
+
+@app.get("/user")
+async def get_user(token: Optional[str] = Cookie(None)):
+    return token
